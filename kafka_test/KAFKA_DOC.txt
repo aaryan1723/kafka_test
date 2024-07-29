@@ -1,0 +1,26 @@
+
+TO SET UP ZOOKEEPER
+PS C:\Users\aryan.p> docker run -p 2181:2181 zookeeper
+
+
+TO SET UP CONNECTION
+PS C:\Users\aryan.p> docker run -p 9092:9092 `
+>> -e KAFKA_ZOOKEEPER_CONNECT=172.16.150.51:2181 `
+>> -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://172.16.150.51:9092 `
+>> -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 `
+>> confluentinc/cp-kafka
+
+
+FOR SETTING PRODUCER
+from kafka import KafkaProducer
+producer = KafkaProducer(bootstrap_servers='localhost:9092')
+# Send a test message to the 'test' topic
+producer.send('test', b'THIS IS FIRST TRANSMISSION')
+producer.flush()
+print("Message sent successfully")
+
+FOR SETTING CONSUMER
+from kafka import KafkaConsumer
+consumer = KafkaConsumer('test', bootstrap_servers='localhost:9092', auto_offset_reset='earliest')
+for message in consumer:
+    print(f"Received message: {message.value.decode('utf-8')}")
